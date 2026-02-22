@@ -4,7 +4,7 @@
 
 Mean-Field Updates:
 
-- **Push-forward**: Exact mean-field update using white-box access to the individual state transition dynamics.
+- **Analytic/Push-forward**: Exact mean-field update using white-box access to the individual state transition dynamics.
 - **Sample-based**: Approximate mean-field update by sampling individual trajectories.
 
 Environments are implemented by creating:
