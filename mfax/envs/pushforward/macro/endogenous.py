@@ -29,13 +29,13 @@ class PushforwardEndogenousEnvParams(PushforwardEnvParams, BaseEndogenousEnvPara
     states: jax.Array = field(default_factory=lambda: jnp.empty((0, 0)))
 
     # states per dimension
-    lower_bound: jax.Array = jnp.array([0.0, 0.1])
-    upper_bound: jax.Array = jnp.array([99, 2.0])
+    lower_bound: jax.Array = field(default_factory=lambda: jnp.array([0.0, 0.1]))
+    upper_bound: jax.Array = field(default_factory=lambda: jnp.array([99, 2.0]))
     num_states: tuple[int, int] = (200, 5)
 
     # idiosyncratic noise parameters
-    idio_atoms: jax.Array = jnp.array([-1, 0, 1])
-    idio_atoms_probs: jax.Array = jnp.array([0.1, 0.8, 0.1])
+    idio_atoms: jax.Array = field(default_factory=lambda: jnp.array([-1, 0, 1]))
+    idio_atoms_probs: jax.Array = field(default_factory=lambda: jnp.array([0.1, 0.8, 0.1]))
 
     def __post_init__(self):
         BaseEndogenousEnvParams.__post_init__(self)

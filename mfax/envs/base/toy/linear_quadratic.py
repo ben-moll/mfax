@@ -1,5 +1,6 @@
 import jax
 import jax.numpy as jnp
+from dataclasses import field
 from flax import struct
 import math
 from gymnax.environments import spaces
@@ -26,13 +27,13 @@ class BaseLinearQuadraticEnvParams(BaseEnvParams):
     num_states: int = 99
 
     # actions
-    actions: jax.Array = jnp.array([-3, -2, -1, 0, 1, 2, 3])
+    actions: jax.Array = field(default_factory=lambda: jnp.array([-3, -2, -1, 0, 1, 2, 3]))
 
     # idiosyncratic noise parameters
     idio_noise: bool = True
     idio_atoms_per_side: int = 3
-    idio_atoms: jnp.ndarray = jnp.empty((0,))
-    idio_atoms_probs: jnp.ndarray = jnp.empty((0,))
+    idio_atoms: jnp.ndarray = field(default_factory=lambda: jnp.empty((0,)))
+    idio_atoms_probs: jnp.ndarray = field(default_factory=lambda: jnp.empty((0,)))
 
     # common noise parameters
     common_noise: bool = False

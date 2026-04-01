@@ -1,5 +1,6 @@
 import jax
 import jax.numpy as jnp
+from dataclasses import field
 from flax import struct
 from gymnax.environments import spaces
 
@@ -18,12 +19,12 @@ class BaseBeachBar1DEnvParams(BaseEnvParams):
     num_states: int = 101
 
     # actions
-    actions: jax.Array = jnp.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
+    actions: jax.Array = field(default_factory=lambda: jnp.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]))
 
     # idiosyncratic noise parameters
     idio_noise: bool = True
-    idio_atoms: jax.Array = jnp.array([-2, -1, 0, 1, 2])
-    idio_atoms_probs: jax.Array = jnp.array([0.05, 0.1, 0.7, 0.1, 0.05])
+    idio_atoms: jax.Array = field(default_factory=lambda: jnp.array([-2, -1, 0, 1, 2]))
+    idio_atoms_probs: jax.Array = field(default_factory=lambda: jnp.array([0.05, 0.1, 0.7, 0.1, 0.05]))
 
     # common noise parameters
     common_noise: bool = False
