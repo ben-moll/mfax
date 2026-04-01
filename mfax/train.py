@@ -211,6 +211,15 @@ def train(algo: str, max_time: float = 300.0, **overrides) -> TrainResult:
         max_steps_in_episode=env.params.max_steps_in_episode,
     )
 
+    # --- JIT warmup: trigger compilation before timing ---
+    print(f"[{algo.upper()}] Compiling (JIT warmup)...")
+    rng, warmup_rng, warmup_eval_rng = jax.random.split(rng, 3)
+    warmup_state = (actor_ts, warmup_rng)
+    warmup_state, _ = jax.lax.scan(train_step, warmup_state, None, 1)
+    jax.block_until_ready(warmup_state)
+    _ = exploitability_fn(warmup_eval_rng, actor_ts.params)
+    print(f"[{algo.upper()}] Compilation done.")
+
     # --- training loop ---
     result = TrainResult(
         algo=algo,
