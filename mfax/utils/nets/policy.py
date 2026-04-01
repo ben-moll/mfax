@@ -3,10 +3,41 @@ from typing import Sequence, Callable
 import jax
 import jax.numpy as jnp
 
-import distrax
+try:
+    import distrax
+except (ImportError, AttributeError):
+    distrax = None
 from flax import linen as nn
 
 from mfax.utils.nets.base import MLP
+
+
+# Lightweight fallback for distrax.Categorical when distrax is unavailable
+class _FallbackCategorical:
+    def __init__(self, logits):
+        self.logits = logits
+
+    def sample(self, seed):
+        return jax.random.categorical(seed, self.logits, axis=-1)
+
+    def log_prob(self, action):
+        return jnp.take_along_axis(
+            jax.nn.log_softmax(self.logits, axis=-1),
+            action[..., None], axis=-1,
+        ).squeeze(-1)
+
+    def mode(self):
+        return jnp.argmax(self.logits, axis=-1)
+
+    def entropy(self):
+        p = jax.nn.softmax(self.logits, axis=-1)
+        return -jnp.sum(p * jax.nn.log_softmax(self.logits, axis=-1), axis=-1)
+
+
+def _Categorical(logits):
+    if distrax is not None:
+        return distrax.Categorical(logits=logits)
+    return _FallbackCategorical(logits)
 
 
 class DiscretePolicy(nn.Module):
@@ -65,7 +96,7 @@ class DiscretePolicy(nn.Module):
             jnp.concatenate([state_embedding, obs_embedding], axis=-1)
         )
         action_logits = self.action_logits(features)
-        return distrax.Categorical(logits=action_logits)
+        return _Categorical(action_logits)
 
     def sample_and_log_prob(self, state, obs, rng):
         return self(state, obs, rng)
