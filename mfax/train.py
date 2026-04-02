@@ -26,6 +26,8 @@ class TrainResult:
     policy_returns: List[float]
     final_eval_results: Any
     final_params: Any
+    mf_policy_net: Any = None
+    env: Any = None
 
 
 def train(algo: str, max_time: float = 300.0, **overrides) -> TrainResult:
@@ -282,4 +284,6 @@ def train(algo: str, max_time: float = 300.0, **overrides) -> TrainResult:
 
     result.final_eval_results = mf_eval_results
     result.final_params = actor_ts.params
+    result.mf_policy_net = mf_policy_net
+    result.env = env
     return result

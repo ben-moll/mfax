@@ -217,6 +217,12 @@ class BetaPolicy(nn.Module):
         action = self.action_loc + action * self.action_scale
         return action
 
+    def mean(self, state, obs):
+        action_dist = self._action_dist(state, obs)
+        action = action_dist.mean()
+        action = self.action_loc + action * self.action_scale
+        return action
+
     def log_prob(self, state, obs, action):
         action_dist = self._action_dist(state, obs)
         action = jnp.clip(
